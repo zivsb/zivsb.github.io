@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="Author" content="Ziv Weissman">
+<meta name="GENERATOR" content="handcoded in a text editor, the way the ancients intended">
+<title>Ziv Weissman :: a node on the information superhighway</title>
+<style>
+  html { background:#000; }
+  body {
+    margin:0; padding:0 0 50px;
+    color:#33ffcc;
+    font-family:"Times New Roman", Times, serif;
+    font-size:17px;
+    text-align:center;
+    background-color:#000010;
+    background-image:
+      radial-gradient(1px 1px at 24px 32px,  #fff, transparent),
+      radial-gradient(1px 1px at 120px 80px, #fff, transparent),
+      radial-gradient(2px 2px at 200px 160px,#cde, transparent),
+      radial-gradient(1px 1px at 60px 200px, #fff, transparent),
+      radial-gradient(1px 1px at 280px 50px, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 340px 220px,#9ff,transparent);
+    background-repeat:repeat;
+    background-size:320px 240px;
+  }
+  a { color:#cc99ff; }
+  a:visited { color:#66cccc; }
+  a:active { color:#ff0066; }
+
+  /* ---------- top status bar ---------- */
+  .topbar {
+    background:#000; color:#39ff14; border-bottom:2px solid #39ff14;
+    font-family:"Courier New",monospace; font-size:13px;
+    padding:4px 0; letter-spacing:1px; overflow:hidden;
+  }
+
+  /* ---------- big WordArt banner ---------- */
+  .banner {
+    font-family:"Impact","Arial Black",sans-serif;
+    font-size:62px; line-height:1; letter-spacing:3px;
+    margin:26px 0 2px;
+    background:linear-gradient(#fffbe6 0%, #ffd700 42%, #a86b00 52%, #ffe98a 70%, #fff 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter:drop-shadow(3px 3px 0 #000) drop-shadow(-1px -1px 0 #5a3d00);
+  }
+  .twinkle { color:#ffe14d; animation:tw 1s steps(2) infinite; -webkit-text-fill-color:#ffe14d; }
+  @keyframes tw { 0%{opacity:1;} 50%{opacity:.2;} }
+  .sub { color:#7fd6ff; font-style:italic; font-size:16px; margin:0 0 6px; }
+  .blink { animation:bl 1.05s steps(2) infinite; }
+  @keyframes bl { 50%{opacity:0;} }
+
+  marquee.research { color:#39ff14; font-weight:bold; font-size:16px; margin:4px 0 16px;
+    font-family:"Courier New",monospace; }
+
+  /* ---------- silver content panel ---------- */
+  .panel {
+    max-width:600px; margin:18px auto; text-align:left;
+    background:#c0c0c0; color:#000;
+    border:4px ridge #efefef; padding:18px 24px;
+    box-shadow:0 0 0 2px #000, 6px 6px 0 #00000080;
+  }
+  .panel a { color:#0000ee; }
+  .panel a:visited { color:#551a8b; }
+  .panel p { margin:0 0 14px; }
+  .panel h2 {
+    font-family:"Impact","Arial Black",sans-serif; letter-spacing:1px;
+    text-align:center; color:#000080; margin:2px 0 12px; font-size:24px;
+    text-shadow:1px 1px 0 #fff;
+  }
+  .lead { text-align:center; margin-bottom:16px; }
+
+  /* ---------- course-catalog "transmissions" ---------- */
+  .catalog { max-width:600px; margin:18px auto; text-align:left;
+    background:#000030; border:3px groove #5555aa; padding:14px 22px; color:#9ff; }
+  .catalog .unit { color:#ffe14d; font-family:"Impact",sans-serif; font-size:20px;
+    letter-spacing:1px; margin:10px 0 4px; }
+  .catalog ul { list-style:none; margin:0 0 8px; padding:0; }
+  .catalog li { margin:6px 0; }
+  .catalog li:before { content:"\25B8  "; color:#ff0066; }
+
+  hr.rainbow { height:5px; border:0; margin:18px auto; max-width:600px;
+    background:linear-gradient(to right,#ff0000,#ff8c00,#ffd700,#00c000,#0080ff,#4b0082,#9400d3); }
+
+  /* ---------- beveled buttons ---------- */
+  .nav { margin:18px 0 6px; }
+  .btn {
+    display:inline-block; background:#c0c0c0; color:#000 !important;
+    border:3px outset #fff; padding:6px 14px; margin:4px;
+    text-decoration:none; font-weight:bold; font-size:15px;
+    font-family:"Arial",sans-serif;
+  }
+  .btn:active { border-style:inset; }
+
+  /* ---------- email panel ---------- */
+  .mailbox { max-width:600px; margin:18px auto; background:#c0c0c0; color:#000;
+    border:4px ridge #efefef; padding:14px; }
+
+  /* ---------- 88x31 badges ---------- */
+  .badges { margin:16px auto; max-width:620px; line-height:0; }
+  .badge {
+    display:inline-block; width:88px; height:31px; margin:3px;
+    border:1px solid #000; box-sizing:border-box; vertical-align:middle;
+    font-family:"Arial",sans-serif; font-size:8px; font-weight:bold;
+    line-height:1; text-align:center; letter-spacing:.2px; overflow:hidden;
+    text-decoration:none;
+  }
+  .badge b { display:flex; width:100%; height:100%; align-items:center; justify-content:center;
+    padding:0 3px; box-sizing:border-box; text-transform:uppercase; }
+  .b1 { background:#000080; color:#fff; }
+  .b2 { background:linear-gradient(90deg,#39ff14 0 28px,#000 28px); color:#39ff14; }
+  .b3 { background:#ffcf00; color:#000; }
+  .b4 { background:#003b6f; color:#ffd700; }
+  .b5 { background:#400040; color:#ff66cc; }
+
+  /* ---------- LED counter ---------- */
+  .counterwrap { margin:16px 0 6px; color:#7fd6ff; font-family:"Courier New",monospace; }
+  .counter {
+    display:inline-block; font-family:"Courier New",monospace;
+    background:#000; color:#39ff14; border:3px inset #777;
+    padding:3px 8px; letter-spacing:4px; font-size:18px;
+    box-shadow:0 0 10px #39ff1466;
+  }
+
+  /* ---------- under construction ---------- */
+  .construction {
+    display:inline-block; margin:16px auto 6px; padding:6px 16px;
+    color:#000; font-weight:bold; font-size:13px; letter-spacing:1px;
+    background:repeating-linear-gradient(45deg,#ffcf00 0 12px,#000 12px 24px);
+    background-size:34px 34px; animation:march 1s linear infinite;
+    -webkit-text-fill-color:#000;
+  }
+  @keyframes march { 100%{ background-position:34px 0; } }
+  .construction span { background:#ffcf00; padding:2px 5px; }
+
+  .smallnote { color:#8aa; font-size:12px; margin-top:14px; font-family:"Courier New",monospace; }
+</style>
+</head>
+<body>
+
+  <div class="topbar" id="topbar" style="display:none;">
+    &gt;&gt; CONNECTION ESTABLISHED @ <span id="bw"></span> :: <span class="blink">_</span>
+  </div>
+
+  <div class="banner"><span class="twinkle">&#10022;</span> ZIV WEISSMAN <span class="twinkle">&#10022;</span></div>
+  <p class="sub">CS PhD Student at UC Berkeley working on next gen computer networking</p>
+
+  <marquee class="research" behavior="scroll" scrollamount="6">
+    &#9889; network protocols &times; coding theory &#9670; datacenter &amp; GPU networking &#9670; the next-generation internet &#9889;
+  </marquee>
+
+  <div class="panel">
+    <h2>&#9733; ABOUT ME &#9733;</h2>
+    <p class="lead">
+      I'm <b>Ziv Weissman</b>, an incoming CS PhD student at UC&nbsp;Berkeley, in the
+      <a href="https://netsys.cs.berkeley.edu/">NetSys</a> lab, advised by
+      Sylvia&nbsp;Ratnasamy and Rishabh&nbsp;Iyer. I am interested in building
+      next generation networks that are well suited to modern workloads and
+      infrastructure.
+    </p>
+  </div>
+
+  <div class="catalog">
+    <div class="unit">&#9758; RESEARCH INTERESTS</div>
+    <ul>
+      <li>the intersection of network protocols and coding theory</li>
+      <li>datacenter and GPU networking</li>
+      <li>the next-generation internet</li>
+    </ul>
+  </div>
+
+  <hr class="rainbow">
+
+  <div class="nav">
+    <a class="btn" href="Ziv_Weissman_CV.pdf">&#9636; CV</a>
+    <a class="btn" href="https://scholar.google.com/citations?user=PTzzqlEAAAAJ&amp;hl=en">&#10070; Google Scholar</a>
+    <a class="btn" href="https://github.com/zivsb">&#9733; GitHub</a>
+  </div>
+
+  <div class="mailbox">
+    <b>E-MAIL ME</b> &nbsp;:&nbsp;
+    <img src="email.gif" alt="my e-mail address" width="332" height="53"
+         style="vertical-align:middle;">
+  </div>
+
+  <div class="badges">
+    <span class="badge b1"><b>Hand-written Claude prompts</b></span>
+    <span class="badge b2"><b>Powered by Packets</b></span>
+    <span class="badge b3"><b>RFC&nbsp;793 Compliant</b></span>
+    <span class="badge b4"><b>NetSys&nbsp;@&nbsp;Berkeley</b></span>
+    <span class="badge b5"><b>100% Organic Bits</b></span>
+  </div>
+
+  <div class="counterwrap">
+    &#10039; You are visitor &nbsp; <span class="counter" id="hits">00000256</span> &nbsp; &#10039;
+  </div>
+
+  <div class="construction"><span>&#9888; UNDER CONSTRUCTION &#9888;</span></div>
+
+  <p class="smallnote">
+    last updated June 2026 &nbsp;&middot;&nbsp; &copy; Ziv Weissman
+  </p>
+
+  <script>
+    // ---- Top bar: only shown if the browser reports a real bandwidth estimate ----
+    (function(){
+      var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      if (conn && typeof conn.downlink === "number" && conn.downlink > 0) {
+        document.getElementById("bw").textContent = conn.downlink + " Mbps";
+        document.getElementById("topbar").style.display = "block";
+      }
+    })();
+
+    // ---- Live visitor counter (works on static hosts like GitHub Pages) ----
+    fetch("https://api.counterapi.dev/v1/zivweissman.com/visits/up")
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        var n = (d && (d.count != null ? d.count : d.value));
+        if (n != null) {
+          document.getElementById("hits").textContent = String(n).padStart(8, "0");
+        }
+      })
+      .catch(function(){ /* keep static fallback */ });
+  </script>
+
+</body>
+</html>
