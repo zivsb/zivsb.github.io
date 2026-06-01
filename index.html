@@ -212,13 +212,34 @@
   </p>
 
   <script>
-    // ---- Top bar: only shown if the browser reports a real bandwidth estimate ----
+    // ---- Top bar: measure real download throughput by timing an asset fetch ----
+    // Works in every browser (no Network Information API needed). Warms up the
+    // connection first, then takes the fastest of a few samples to limit the
+    // effect of latency on a small payload.
     (function(){
-      var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-      if (conn && typeof conn.downlink === "number" && conn.downlink > 0) {
-        document.getElementById("bw").textContent = conn.downlink + " Mbps";
-        document.getElementById("topbar").style.display = "block";
+      var asset = "Ziv_Weissman_CV.pdf";   // ~90 KB, already hosted
+      function sample(){
+        var t0 = performance.now();
+        return fetch(asset + "?cb=" + Date.now() + "-" + Math.random(), { cache: "no-store" })
+          .then(function(r){ return r.arrayBuffer(); })
+          .then(function(buf){
+            var secs = (performance.now() - t0) / 1000;
+            return secs > 0 ? (buf.byteLength * 8) / secs / 1e6 : 0;  // Mbps
+          });
       }
+      // warm-up (establish TLS/connection), then 3 measured samples
+      sample()
+        .then(function(){ return Promise.all([sample(), sample(), sample()]); })
+        .then(function(rates){
+          var best = Math.max.apply(null, rates);
+          if (best > 0) {
+            var txt = best >= 1 ? best.toFixed(1) + " Mbps"
+                                : Math.round(best * 1000) + " Kbps";
+            document.getElementById("bw").textContent = txt;
+            document.getElementById("topbar").style.display = "block";
+          }
+        })
+        .catch(function(){ /* leave the bar hidden if measurement fails */ });
     })();
 
     // ---- Live visitor counter (works on static hosts like GitHub Pages) ----
