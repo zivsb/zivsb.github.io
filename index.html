@@ -212,12 +212,15 @@
   </p>
 
   <script>
-    // ---- Top bar: measure real download throughput by timing an asset fetch ----
-    // Works in every browser (no Network Information API needed). Warms up the
-    // connection first, then takes the fastest of a few samples to limit the
-    // effect of latency on a small payload.
+    // ---- Top bar: a faux shell prompt that runs a real speed test ----
+    // Looks up the visitor's public IP for the prompt, then measures actual
+    // download throughput by timing an asset fetch (works in every browser).
     (function(){
       var asset = "Ziv_Weissman_CV.pdf";   // already hosted
+      function esc(s){ return String(s).replace(/[&<>]/g, function(c){
+        return { "&":"&amp;", "<":"&lt;", ">":"&gt;" }[c]; }); }
+      function C(color, s){ return '<span style="color:' + color + '">' + s + '</span>'; }
+
       function sample(){
         var t0 = performance.now();
         return fetch(asset + "?cb=" + Date.now() + "-" + Math.random(), { cache: "no-store" })
@@ -228,24 +231,35 @@
                      mbps: ms > 0 ? (buf.byteLength * 8) / (ms / 1000) / 1e6 : 0 };
           });
       }
+
+      // public IP for the prompt; falls back to "localhost" if it can't be fetched
+      var ipP = fetch("https://api.ipify.org?format=json")
+        .then(function(r){ return r.json(); })
+        .then(function(d){ return d && d.ip; })
+        .catch(function(){ return null; });
+
       // warm-up (establish TLS/connection), then take the fastest of 3 samples
-      sample()
+      var bwP = sample()
         .then(function(){ return Promise.all([sample(), sample(), sample()]); })
-        .then(function(s){
-          var best = s.reduce(function(a, b){ return b.mbps > a.mbps ? b : a; });
-          if (best.mbps > 0) {
-            var kb = (best.bytes / 1024).toFixed(1) + " KB";
-            var t  = best.ms >= 1 ? best.ms.toFixed(1) + " ms"
-                                  : (best.ms * 1000).toFixed(0) + " µs";
-            var rate = best.mbps >= 1 ? best.mbps.toFixed(1) + " Mbps"
-                                      : Math.round(best.mbps * 1000) + " Kbps";
-            document.getElementById("bw").innerHTML =
-              "&#9654; LINK ESTABLISHED &nbsp;&middot;&nbsp; rx " + kb +
-              " / " + t + " &nbsp;&middot;&nbsp; &darr; " + rate;
-            document.getElementById("topbar").style.display = "block";
-          }
-        })
-        .catch(function(){ /* leave the bar hidden if measurement fails */ });
+        .then(function(s){ return s.reduce(function(a, b){ return b.mbps > a.mbps ? b : a; }); });
+
+      Promise.all([ipP, bwP]).then(function(res){
+        var ip = res[0], best = res[1];
+        if (!best || best.mbps <= 0) return;
+        var kb   = (best.bytes / 1024).toFixed(1) + " KB";
+        var t    = best.ms >= 1 ? best.ms.toFixed(1) + "ms" : (best.ms * 1000).toFixed(0) + "us";
+        var rate = best.mbps >= 1 ? best.mbps.toFixed(1) + " Mbps"
+                                  : Math.round(best.mbps * 1000) + " Kbps";
+        var host = esc(ip || "localhost");
+        var prompt = C("#39ff14", "guest@" + host) + C("#cfe6ff", ":") +
+                     C("#7fd6ff", "~") + C("#cfe6ff", "$") + " ";
+        var cmd    = C("#ffffff", "curl -O ziv.dev/cv.pdf");
+        var out    = "&nbsp;&nbsp;" + C("#8fb6c8", kb + " / " + t) +
+                     " &nbsp; " + C("#ffe14d", "&darr; " + rate) +
+                     " &nbsp; " + C("#39ff14", "[200 OK]");
+        document.getElementById("bw").innerHTML = prompt + cmd + out;
+        document.getElementById("topbar").style.display = "block";
+      }).catch(function(){ /* leave the bar hidden if measurement fails */ });
     })();
 
     // ---- Live visitor counter (works on static hosts like GitHub Pages) ----
