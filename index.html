@@ -48,8 +48,10 @@
     -webkit-background-clip:text; background-clip:text; color:transparent;
     filter:drop-shadow(3px 3px 0 #000) drop-shadow(-1px -1px 0 #5a3d00);
   }
-  .twinkle { color:#ffe14d; animation:tw 1s steps(2) infinite; -webkit-text-fill-color:#ffe14d; }
-  @keyframes tw { 0%{opacity:1;} 50%{opacity:.2;} }
+  .sat { vertical-align:middle; margin:0 18px; animation:floaty 4s ease-in-out infinite; }
+  .sat.flip { animation:floatyflip 4s ease-in-out infinite; animation-delay:2s; }
+  @keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-6px); } }
+  @keyframes floatyflip { 0%,100%{ transform:scaleX(-1) translateY(0); } 50%{ transform:scaleX(-1) translateY(-6px); } }
   .sub { color:#7fd6ff; font-style:italic; font-size:16px; margin:0 0 6px; }
   .blink { animation:bl 1.05s steps(2) infinite; }
   @keyframes bl { 50%{opacity:0;} }
@@ -146,7 +148,7 @@
     &gt;&gt; CONNECTION ESTABLISHED @ <span id="bw"></span> :: <span class="blink">_</span>
   </div>
 
-  <div class="banner"><span class="twinkle">&#10022;</span> ZIV WEISSMAN <span class="twinkle">&#10022;</span></div>
+  <div class="banner"><img class="sat" src="satellite.png" alt="" width="85" height="52"> ZIV WEISSMAN <img class="sat flip" src="satellite.png" alt="" width="85" height="52"></div>
   <p class="sub">CS PhD Student at UC Berkeley working on next gen computer networking</p>
 
   <marquee class="research" behavior="scroll" scrollamount="6">
