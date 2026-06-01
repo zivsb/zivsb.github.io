@@ -251,12 +251,13 @@
         var rate = best.mbps >= 1 ? best.mbps.toFixed(1) + " Mbps"
                                   : Math.round(best.mbps * 1000) + " Kbps";
         var host = esc(ip || "localhost");
+        var SEP  = C("#2f7d4f", "&nbsp;&nbsp;|&nbsp;&nbsp;");
         document.getElementById("bw").innerHTML =
-          "&gt;&gt;CONNECTION ESTABLISHED: " +
-          C("#39ff14", "$guest@" + host) +
-          " | " + C("#8fb6c8", kb + " / " + t) +
-          " &nbsp; " + C("#ffe14d", "&darr; " + rate) +
-          " &nbsp; " + C("#39ff14", "[200 OK]");
+          C("#39ff14", "&gt;&gt; CONNECTION ESTABLISHED:") + "&nbsp;&nbsp;" +
+          C("#7fd6ff", "$guest@" + host) + SEP +
+          C("#8fb6c8", kb + " / " + t) + SEP +
+          C("#ffe14d", "&darr; " + rate) + SEP +
+          C("#39ff14", "[200 OK]");
         document.getElementById("topbar").style.display = "block";
       }).catch(function(){ /* leave the bar hidden if measurement fails */ });
     })();
