@@ -253,7 +253,9 @@
         var host = esc(ip || "localhost");
         var prompt = C("#39ff14", "guest@" + host) + C("#cfe6ff", ":") +
                      C("#7fd6ff", "~") + C("#cfe6ff", "$") + " ";
-        var cmd    = C("#ffffff", "curl -O " + esc(asset));
+        var origin = (location.origin && location.origin !== "null")
+                       ? location.origin : "https://zivsb.github.io";
+        var cmd    = C("#ffffff", "curl -O " + esc(origin + "/" + asset));
         var out    = "&nbsp;&nbsp;" + C("#8fb6c8", kb + " / " + t) +
                      " &nbsp; " + C("#ffe14d", "&darr; " + rate) +
                      " &nbsp; " + C("#39ff14", "[200 OK]");
