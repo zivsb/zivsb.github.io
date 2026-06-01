@@ -148,7 +148,7 @@
 <body>
 
   <div class="topbar" id="topbar" style="display:none;">
-    &gt;&gt; CONNECTION ESTABLISHED @ <span id="bw"></span> :: <span class="blink">_</span>
+    &gt;&gt; CONNECTION ESTABLISHED: <span id="bw"></span> <span class="blink">_</span>
   </div>
 
   <div class="banner"><img class="sat" src="satellite.png" alt="" width="85" height="52"> ZIV WEISSMAN <img class="sat flip" src="satellite.png" alt="" width="85" height="52"></div>
@@ -217,25 +217,30 @@
     // connection first, then takes the fastest of a few samples to limit the
     // effect of latency on a small payload.
     (function(){
-      var asset = "Ziv_Weissman_CV.pdf";   // ~90 KB, already hosted
+      var asset = "Ziv_Weissman_CV.pdf";   // already hosted
       function sample(){
         var t0 = performance.now();
         return fetch(asset + "?cb=" + Date.now() + "-" + Math.random(), { cache: "no-store" })
           .then(function(r){ return r.arrayBuffer(); })
           .then(function(buf){
-            var secs = (performance.now() - t0) / 1000;
-            return secs > 0 ? (buf.byteLength * 8) / secs / 1e6 : 0;  // Mbps
+            var ms = performance.now() - t0;
+            return { bytes: buf.byteLength, ms: ms,
+                     mbps: ms > 0 ? (buf.byteLength * 8) / (ms / 1000) / 1e6 : 0 };
           });
       }
-      // warm-up (establish TLS/connection), then 3 measured samples
+      // warm-up (establish TLS/connection), then take the fastest of 3 samples
       sample()
         .then(function(){ return Promise.all([sample(), sample(), sample()]); })
-        .then(function(rates){
-          var best = Math.max.apply(null, rates);
-          if (best > 0) {
-            var txt = best >= 1 ? best.toFixed(1) + " Mbps"
-                                : Math.round(best * 1000) + " Kbps";
-            document.getElementById("bw").textContent = txt;
+        .then(function(s){
+          var best = s.reduce(function(a, b){ return b.mbps > a.mbps ? b : a; });
+          if (best.mbps > 0) {
+            var kb = (best.bytes / 1024).toFixed(1) + " KB";
+            var t  = best.ms >= 1 ? best.ms.toFixed(1) + " ms"
+                                  : (best.ms * 1000).toFixed(0) + " µs";
+            var rate = best.mbps >= 1 ? best.mbps.toFixed(1) + " Mbps"
+                                      : Math.round(best.mbps * 1000) + " Kbps";
+            document.getElementById("bw").innerHTML =
+              kb + " in " + t + " &nbsp;&rarr;&nbsp; " + rate;
             document.getElementById("topbar").style.display = "block";
           }
         })
