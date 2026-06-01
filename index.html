@@ -148,7 +148,7 @@
 <body>
 
   <div class="topbar" id="topbar" style="display:none;">
-    &gt;&gt; CONNECTION ESTABLISHED: <span id="bw"></span> <span class="blink">_</span>
+    <span id="bw"></span> <span class="blink">_</span>
   </div>
 
   <div class="banner"><img class="sat" src="satellite.png" alt="" width="85" height="52"> ZIV WEISSMAN <img class="sat flip" src="satellite.png" alt="" width="85" height="52"></div>
@@ -240,7 +240,8 @@
             var rate = best.mbps >= 1 ? best.mbps.toFixed(1) + " Mbps"
                                       : Math.round(best.mbps * 1000) + " Kbps";
             document.getElementById("bw").innerHTML =
-              kb + " in " + t + " &nbsp;&rarr;&nbsp; " + rate;
+              "&#9654; LINK ESTABLISHED &nbsp;&middot;&nbsp; rx " + kb +
+              " / " + t + " &nbsp;&middot;&nbsp; &darr; " + rate;
             document.getElementById("topbar").style.display = "block";
           }
         })
