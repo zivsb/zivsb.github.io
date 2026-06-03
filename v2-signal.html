@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ZIV // SIGNAL</title>
+<style>
+  :root{ --bone:#e9e6df; --ink:#04050a; --cobalt:#2f4cff; --red:#c01620; --dim:#5f6fa6; --line:#202b48; }
+  *{box-sizing:border-box;}
+  html,body{margin:0;min-height:100%;}
+  body{background:var(--ink);color:var(--bone);font-family:"Times New Roman",Times,serif;
+    overflow-x:hidden;min-height:100vh;}
+  #noise{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.10;mix-blend-mode:screen;}
+  .scan{position:fixed;inset:0;z-index:3;pointer-events:none;
+    background:repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 2px, rgba(0,0,0,.20) 2px 3px);}
+  .vig{position:fixed;inset:0;z-index:2;pointer-events:none;
+    background:radial-gradient(130% 90% at 50% 45%, transparent 50%, #000 100%);}
+
+  .term{position:fixed;top:0;left:0;right:0;z-index:20;background:#02030799;
+    border-bottom:1px solid var(--line);backdrop-filter:blur(2px);
+    font-family:monospace;font-size:12px;color:#9fb0e6;letter-spacing:1px;padding:6px 12px;}
+  .term b{color:var(--cobalt);} .term .ok{color:#6f9}
+
+  .wrap{position:relative;z-index:10;max-width:720px;margin:0 auto;
+    padding:120px 22px 80px;text-align:center;}
+
+  /* red eye orb */
+  .orb{width:120px;height:120px;margin:0 auto 26px;border-radius:50%;position:relative;
+    background:radial-gradient(circle at 42% 38%, #ff5a5a 0%, var(--red) 30%, #3a0408 70%, #120103 100%);
+    box-shadow:0 0 60px rgba(192,22,32,.45), 0 0 0 1px #000 inset;}
+  .orb::after{content:"";position:absolute;inset:0;border-radius:50%;mix-blend-mode:overlay;opacity:.5;
+    background-image:radial-gradient(circle, rgba(255,255,255,.4) .5px, transparent .5px);background-size:3px 3px;}
+  .orb::before{content:"";position:absolute;inset:-14px;border:1px solid var(--cobalt);border-radius:50%;
+    opacity:.4;animation:pulse 3.4s ease-in-out infinite;}
+  @keyframes pulse{50%{transform:scale(1.12);opacity:.1;}}
+
+  .glitch{position:relative;display:inline-block;font-family:"Impact","Arial Black",sans-serif;
+    letter-spacing:5px;font-size:clamp(32px,8vw,68px);line-height:1;color:var(--bone);}
+  .glitch::before,.glitch::after{content:attr(data-text);position:absolute;inset:0;}
+  .glitch::before{color:var(--cobalt);clip-path:inset(0 0 55% 0);animation:g1 2.9s infinite steps(2);}
+  .glitch::after{color:var(--red);clip-path:inset(55% 0 0 0);animation:g2 3.3s infinite steps(2);}
+  @keyframes g1{0%,85%,100%{transform:translate(0)}88%{transform:translate(-4px,-1px)}94%{transform:translate(3px,1px)}}
+  @keyframes g2{0%,83%,100%{transform:translate(0)}90%{transform:translate(4px,1px)}96%{transform:translate(-3px,-1px)}}
+  .sub{font-family:monospace;color:var(--dim);letter-spacing:3px;font-size:12px;text-transform:uppercase;margin-top:14px;}
+
+  .card{margin:34px auto 0;max-width:560px;background:#070912cc;border:1px solid var(--line);
+    padding:22px 24px;text-align:left;font-family:monospace;font-size:13px;line-height:1.9;color:#aebbe6;}
+  .card b{color:var(--bone);} .card a{color:#8fa6ff;}
+  .rx{display:block;color:var(--cobalt);font-size:10px;letter-spacing:3px;margin-bottom:8px;}
+  ul.sig{list-style:none;margin:14px 0 0;padding:0;}
+  ul.sig li{padding:4px 0;}
+  ul.sig li::before{content:"▚ ";color:var(--red);}
+
+  .links{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:26px;}
+  .lnk{border:1px solid var(--line);color:#cfe;padding:8px 18px;font-family:monospace;font-size:12px;
+    letter-spacing:2px;text-decoration:none;}
+  .lnk:hover{border-color:var(--cobalt);color:#fff;background:rgba(47,76,255,.1);}
+  .foot{margin-top:46px;font-family:monospace;font-size:11px;letter-spacing:3px;color:var(--dim);}
+  .nav{position:fixed;bottom:12px;right:14px;z-index:20;font-family:monospace;font-size:11px;}
+  .nav a{color:var(--dim);text-decoration:none;margin-left:10px;}.nav a:hover{color:var(--cobalt);}
+</style>
+</head>
+<body>
+  <canvas id="noise"></canvas>
+  <div class="vig"></div><div class="scan"></div>
+  <div class="term" id="term">&gt;&gt; ACQUIRING SIGNAL<span id="dots"></span></div>
+  <div class="nav"><a href="v2-oracle.html">[oracle]</a><a href="v2-perspective.html">[perspective]</a></div>
+
+  <div class="wrap">
+    <div class="orb"></div>
+    <div class="glitch" data-text="ZIV WEISSMAN">ZIV WEISSMAN</div>
+    <p class="sub">reconstructing signal from noise</p>
+
+    <div class="card">
+      <span class="rx">RX // PACKET 0x01 — DECODED</span>
+      <b>Ziv Weissman</b> — incoming CS PhD student at UC Berkeley, NetSys lab,
+      advised by Sylvia Ratnasamy &amp; Rishabh Iyer. Building next-generation networks
+      well suited to modern workloads and infrastructure.
+      <ul class="sig">
+        <li>network protocols &times; coding theory</li>
+        <li>datacenter &amp; GPU networking</li>
+        <li>the next-generation internet</li>
+      </ul>
+    </div>
+
+    <div class="links">
+      <a class="lnk" href="Ziv_Weissman_CV.pdf">CV</a>
+      <a class="lnk" href="https://scholar.google.com/citations?user=PTzzqlEAAAAJ&amp;hl=en">SCHOLAR</a>
+      <a class="lnk" href="https://github.com/zivsb">GITHUB</a>
+      <a class="lnk" href="https://www.linkedin.com/in/ziv-weissman">LINKEDIN</a>
+    </div>
+    <p class="foot">S/N RATIO NOMINAL &nbsp;·&nbsp; © ZIV WEISSMAN</p>
+  </div>
+
+  <script>
+    // animated dither/noise field with occasional glitch bursts
+    var c = document.getElementById("noise"), x = c.getContext("2d");
+    var W,H,small,sx;
+    function size(){ W=c.width=innerWidth; H=c.height=innerHeight;
+      small=document.createElement("canvas"); small.width=Math.ceil(W/4); small.height=Math.ceil(H/4);
+      sx=small.getContext("2d"); }
+    size(); addEventListener("resize", size);
+    function frame(){
+      var w=small.width, h=small.height, img=sx.createImageData(w,h), d=img.data;
+      var burst = Math.random()<0.04 ? 200 : 70;   // occasional brighter glitch
+      for(var i=0;i<d.length;i+=4){
+        var v = Math.random()*255 < burst ? (Math.random()*255|0) : 0;
+        d[i]=v*0.6; d[i+1]=v*0.7; d[i+2]=v;   // cobalt-tinted noise
+        d[i+3]=255;
+      }
+      sx.putImageData(img,0,0);
+      x.imageSmoothingEnabled=false; x.clearRect(0,0,W,H);
+      x.drawImage(small,0,0,W,H);
+      requestAnimationFrame(frame);
+    }
+    frame();
+    // boot ticker
+    var dots=document.getElementById("dots"), term=document.getElementById("term"), n=0;
+    var iv=setInterval(function(){ dots.textContent="."+Array(n%4+1).join("."); if(++n>6){
+      clearInterval(iv); term.innerHTML="&gt;&gt; <b>LINK ESTABLISHED</b> · S/N RATIO NOMINAL · <span class='ok'>[DECODED]</span>"; } },180);
+  </script>
+</body>
+</html>
