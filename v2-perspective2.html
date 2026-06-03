@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ZIV // PERSPECTIVE mk2</title>
+<style>
+  :root{ --bone:#e9e6df; --ink:#05060a; --cobalt:#3a59ff; --cobalt-l:#7e95ff;
+         --red:#b3121b; --dim:#5a6aa0; --line:#23304f; }
+  *{box-sizing:border-box;}
+  html,body{margin:0;min-height:100%;}
+  body{background:var(--ink);color:var(--bone);font-family:"Times New Roman",Times,serif;
+    overflow-x:hidden;position:relative;min-height:100vh;
+    background-image:radial-gradient(circle, rgba(233,230,223,.045) 1px, transparent 1px);
+    background-size:4px 4px;}
+
+  /* receding perspective grid (from PERSPECTIVE) */
+  .grid{position:fixed;left:0;right:0;height:60vh;z-index:0;pointer-events:none;
+    background-image:
+      linear-gradient(rgba(58,89,255,.20) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(58,89,255,.20) 1px,transparent 1px);
+    background-size:46px 46px;opacity:.55;}
+  .grid.floor{bottom:0;transform:perspective(330px) rotateX(62deg);transform-origin:bottom;
+    animation:flow 10s linear infinite;}
+  .grid.ceil{top:0;transform:perspective(330px) rotateX(-62deg);transform-origin:top;
+    animation:flow 10s linear infinite reverse;}
+  @keyframes flow{to{background-position:0 46px;}}
+
+  /* subtle live noise (from SIGNAL), dialed way down */
+  #noise{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.045;mix-blend-mode:screen;}
+  /* film grain + scanlines + vignette (from ORACLE) */
+  .grain{position:fixed;inset:-50%;z-index:2;pointer-events:none;opacity:.04;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    animation:gr .8s steps(3) infinite;}
+  @keyframes gr{to{transform:translate(5%,4%);}}
+  .scan{position:fixed;inset:0;z-index:3;pointer-events:none;
+    background:repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 2px, rgba(0,0,0,.16) 2px 3px);}
+  .vig{position:fixed;inset:0;z-index:4;pointer-events:none;
+    background:radial-gradient(125% 90% at 50% 42%, transparent 56%, #000 100%);}
+
+  /* corner registration marks (from ORACLE) */
+  .reg{position:fixed;z-index:30;color:var(--cobalt);font-family:monospace;font-size:11px;opacity:.65;}
+  .reg.tr{top:34px;right:14px;} .reg.bl{bottom:12px;left:14px;} .reg.br{bottom:12px;right:14px;}
+
+  /* terminal easter egg bar */
+  .term{position:fixed;top:0;left:0;right:0;z-index:35;
+    background:#04050acc;border-bottom:1px solid var(--line);backdrop-filter:blur(2px);
+    font-family:"Courier New",monospace;font-size:clamp(9px,1.45vw,12px);letter-spacing:0;
+    padding:6px 12px;white-space:nowrap;overflow-x:auto;color:#8fb6c8;
+    scrollbar-width:none;}
+  .term::-webkit-scrollbar{display:none;}
+  .blink{animation:bl 1.05s steps(2) infinite;}
+  @keyframes bl{50%{opacity:0;}}
+
+  .wrap{position:relative;z-index:10;max-width:880px;margin:0 auto;padding:58px 22px 70px;text-align:center;}
+
+  .kicker{font-family:monospace;letter-spacing:5px;font-size:11px;color:var(--cobalt);text-transform:uppercase;}
+  /* subtle glitch title (toned-down ORACLE) */
+  .glitch{position:relative;display:inline-block;font-weight:400;letter-spacing:10px;
+    font-size:clamp(30px,7vw,60px);margin:8px 0 2px;color:var(--bone);}
+  .glitch::before,.glitch::after{content:attr(data-text);position:absolute;inset:0;opacity:.55;}
+  .glitch::before{color:var(--cobalt);transform:translate(-1px,0);clip-path:inset(0 0 58% 0);
+    animation:g1 7s infinite steps(2);}
+  .glitch::after{color:var(--red);transform:translate(1px,0);clip-path:inset(58% 0 0 0);
+    animation:g2 8.5s infinite steps(2);}
+  @keyframes g1{0%,95%,100%{transform:translate(-1px,0)}96%{transform:translate(-3px,-1px)}98%{transform:translate(1px,0)}}
+  @keyframes g2{0%,93%,100%{transform:translate(1px,0)}97%{transform:translate(3px,1px)}99%{transform:translate(-1px,0)}}
+  .sub{font-family:monospace;color:var(--dim);letter-spacing:3px;font-size:12px;margin:0;text-transform:uppercase;}
+
+  /* rotating wireframe lattice (from PERSPECTIVE) */
+  .scene{perspective:700px;height:200px;margin:30px auto 6px;}
+  .cube{width:130px;height:130px;margin:35px auto;position:relative;transform-style:preserve-3d;
+    animation:spin 16s linear infinite;}
+  .cube .f{position:absolute;width:130px;height:130px;border:1px solid var(--cobalt-l);
+    background:rgba(58,89,255,.03);box-shadow:0 0 18px rgba(58,89,255,.15) inset;}
+  .cube .f::after{content:"";position:absolute;inset:0;
+    background-image:linear-gradient(rgba(126,149,255,.22) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(126,149,255,.22) 1px,transparent 1px);background-size:26px 26px;}
+  .ft{transform:translateZ(65px)} .bk{transform:rotateY(180deg) translateZ(65px)}
+  .rt{transform:rotateY(90deg) translateZ(65px)} .lf{transform:rotateY(-90deg) translateZ(65px)}
+  .tp{transform:rotateX(90deg) translateZ(65px)} .bm{transform:rotateX(-90deg) translateZ(65px)}
+  @keyframes spin{to{transform:rotateX(360deg) rotateY(360deg);}}
+  .latlabel{font-family:monospace;font-size:10px;letter-spacing:2px;color:var(--dim);margin-top:-6px;}
+
+  /* figure-plate specs (from PERSPECTIVE) */
+  .specs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    border:1px solid var(--line);margin:34px auto 0;max-width:720px;text-align:left;}
+  .spec{padding:16px 18px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);position:relative;}
+  .spec:last-child{border-right:0;}
+  .spec .n{font-family:monospace;font-size:10px;color:var(--cobalt);letter-spacing:2px;}
+  .spec .t{font-size:15px;margin-top:6px;color:var(--bone);line-height:1.4;}
+  .spec::before{content:"+";position:absolute;top:-7px;left:-7px;color:var(--cobalt);font-family:monospace;}
+
+  /* bio framed as a small window (the ORACLE "element"), kept elegant */
+  .win{max-width:640px;margin:32px auto 0;text-align:left;background:#070912cc;border:1px solid var(--line);}
+  .win .tb{display:flex;justify-content:space-between;align-items:center;
+    background:linear-gradient(#141c38,#0c1326);border-bottom:1px solid var(--line);
+    padding:5px 10px;font-family:monospace;font-size:11px;letter-spacing:2px;color:#bcd;}
+  .win .tb .x{border:1px solid var(--line);padding:0 6px;color:#9fb0e6;}
+  .win .doc{padding:16px 20px;font-family:monospace;font-size:13px;line-height:1.9;color:#aebbe6;}
+  .win .doc b{color:var(--bone);} .win .doc a{color:#8fa6ff;}
+
+  .links{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:28px;}
+  .lnk{border:1px solid var(--line);color:#cfe;padding:8px 18px;font-family:monospace;font-size:12px;
+    letter-spacing:2px;text-decoration:none;}
+  .lnk:hover{border-color:var(--cobalt);color:#fff;background:rgba(58,89,255,.08);}
+  .foot{margin-top:46px;font-family:monospace;font-size:11px;letter-spacing:3px;color:var(--dim);}
+  .nav{position:fixed;top:34px;left:14px;z-index:30;font-family:monospace;font-size:11px;}
+  .nav a{color:var(--dim);text-decoration:none;margin-right:10px;}.nav a:hover{color:var(--cobalt);}
+</style>
+</head>
+<body>
+  <div class="grid ceil"></div><div class="grid floor"></div>
+  <canvas id="noise"></canvas>
+  <div class="grain"></div><div class="scan"></div><div class="vig"></div>
+
+  <div class="term" id="term">&gt;&gt; ESTABLISHING LINK <span class="blink">▓</span></div>
+  <div class="nav"><a href="v2-oracle.html">[oracle]</a><a href="v2-signal.html">[signal]</a></div>
+  <span class="reg tr">REC ●</span><span class="reg bl">PLATE I</span><span class="reg br">SIG//NOISE</span>
+
+  <div class="wrap">
+    <div class="kicker">de prospectiva pingendi · plate i</div>
+    <div class="glitch" data-text="ZIV WEISSMAN">ZIV WEISSMAN</div>
+    <p class="sub">CS PhD · UC Berkeley · NetSys</p>
+
+    <div class="scene">
+      <div class="cube">
+        <div class="f ft"></div><div class="f bk"></div><div class="f rt"></div>
+        <div class="f lf"></div><div class="f tp"></div><div class="f bm"></div>
+      </div>
+    </div>
+    <div class="latlabel">FIG. 1 — LATTICE / coding-theoretic construction, rotating</div>
+
+    <div class="specs">
+      <div class="spec"><div class="n">FIG.2a</div><div class="t">network protocols &times; coding theory</div></div>
+      <div class="spec"><div class="n">FIG.2b</div><div class="t">datacenter &amp; GPU networking</div></div>
+      <div class="spec"><div class="n">FIG.2c</div><div class="t">the next-generation internet</div></div>
+    </div>
+
+    <div class="win">
+      <div class="tb"><span>FIG.III — VITA</span><span class="x">✕</span></div>
+      <div class="doc">
+        <b>Ziv Weissman.</b> Incoming CS PhD student at UC Berkeley in the NetSys lab,
+        advised by Sylvia Ratnasamy and Rishabh Iyer. Constructing next-generation
+        networks well suited to modern workloads and infrastructure — drawing the
+        lines from message to destination.
+      </div>
+    </div>
+
+    <div class="links">
+      <a class="lnk" href="Ziv_Weissman_CV.pdf">CV</a>
+      <a class="lnk" href="https://scholar.google.com/citations?user=PTzzqlEAAAAJ&amp;hl=en">SCHOLAR</a>
+      <a class="lnk" href="https://github.com/zivsb">GITHUB</a>
+      <a class="lnk" href="https://www.linkedin.com/in/ziv-weissman">LINKEDIN</a>
+    </div>
+
+    <p class="foot">VANISHING POINT @ ∞ &nbsp;·&nbsp; © ZIV WEISSMAN</p>
+  </div>
+
+  <script>
+    // ---- subtle background noise (low-fps, faint) ----
+    (function(){
+      var c=document.getElementById("noise"), x=c.getContext("2d"), W,H,sm,sx,tick=0;
+      function size(){ W=c.width=innerWidth; H=c.height=innerHeight;
+        sm=document.createElement("canvas"); sm.width=Math.ceil(W/5); sm.height=Math.ceil(H/5); sx=sm.getContext("2d"); }
+      size(); addEventListener("resize", size);
+      function frame(){
+        if((tick++ & 1)===0){                 // ~30fps, gentle
+          var w=sm.width,h=sm.height,img=sx.createImageData(w,h),d=img.data;
+          for(var i=0;i<d.length;i+=4){ var v=Math.random()*255<55?(Math.random()*255|0):0;
+            d[i]=v*0.55; d[i+1]=v*0.65; d[i+2]=v; d[i+3]=255; }
+          sx.putImageData(img,0,0); x.imageSmoothingEnabled=false; x.clearRect(0,0,W,H); x.drawImage(sm,0,0,W,H);
+        }
+        requestAnimationFrame(frame);
+      }
+      frame();
+    })();
+
+    // ---- accurate terminal easter egg: real IP + measured throughput ----
+    (function(){
+      var asset="Ziv_Weissman_CV.pdf";
+      function esc(s){return String(s).replace(/[&<>]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
+      function C(col,s){return '<span style="color:'+col+'">'+s+'</span>';}
+      function sample(){ var t0=performance.now();
+        return fetch(asset+"?cb="+Date.now()+"-"+Math.random(),{cache:"no-store"})
+          .then(function(r){return r.arrayBuffer();})
+          .then(function(buf){ var ms=performance.now()-t0;
+            return {bytes:buf.byteLength,ms:ms,mbps:ms>0?(buf.byteLength*8)/(ms/1000)/1e6:0}; }); }
+      var ipP=fetch("https://api.ipify.org?format=json").then(function(r){return r.json();})
+        .then(function(d){return d&&d.ip;}).catch(function(){return null;});
+      var bwP=sample().then(function(){return Promise.all([sample(),sample(),sample()]);})
+        .then(function(s){return s.reduce(function(a,b){return b.mbps>a.mbps?b:a;});});
+      Promise.all([ipP,bwP]).then(function(res){
+        var ip=res[0],best=res[1]; if(!best||best.mbps<=0) return;
+        var kb=(best.bytes/1024).toFixed(1)+" KB";
+        var t=best.ms>=1?best.ms.toFixed(1)+"ms":(best.ms*1000).toFixed(0)+"us";
+        var rate=best.mbps>=1?best.mbps.toFixed(1)+" Mbps":Math.round(best.mbps*1000)+" Kbps";
+        var host=esc(ip||"localhost");
+        var SEP=C("#33406a","&nbsp;&nbsp;|&nbsp;&nbsp;");
+        document.getElementById("term").innerHTML=
+          C("#8fb6c8","&gt;&gt; CONNECTION ESTABLISHED:")+"&nbsp;"+
+          C("#7e95ff","guest@"+host)+SEP+
+          C("#8fb6c8",kb+" / "+t)+SEP+
+          C("#cfe6ff","&darr; "+rate)+SEP+
+          C("#6ad08f","[200 OK]")+' <span class="blink">_</span>';
+      }).catch(function(){});
+    })();
+  </script>
+</body>
+</html>
