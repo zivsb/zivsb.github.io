@@ -38,7 +38,7 @@
   .term::-webkit-scrollbar{display:none;}
   .blink{animation:bl 1.05s steps(2) infinite;} @keyframes bl{50%{opacity:0;}}
 
-  .wrap{position:relative;z-index:10;max-width:880px;margin:0 auto;padding:60px 22px 60px;text-align:center;}
+  .wrap{position:relative;z-index:10;max-width:880px;margin:0 auto;padding:60px 22px 22px;text-align:center;}
 
   /* single-color cobalt glitch title over white */
   .glitch{position:relative;display:inline-block;font-weight:400;letter-spacing:10px;
@@ -70,13 +70,13 @@
 
   /* ---- recycled retro footer zone ---- */
   .retro{position:relative;z-index:10;text-align:center;padding:0 16px;}
-  .mailbar{max-width:680px;margin:54px auto 0;background:#0a0e16;border:1px solid var(--line);
+  .mailbar{max-width:680px;margin:40px auto 0;background:#0a0e16;border:1px solid var(--line);
     padding:14px 18px;display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;}
   .mailbar .lab{font-family:monospace;letter-spacing:3px;color:#8fb6c8;font-size:14px;font-weight:bold;}
   .mailbar img{vertical-align:middle;display:block;}
 
-  .afil{font-family:monospace;font-size:10px;letter-spacing:3px;color:#46568a;text-transform:uppercase;margin:30px 0 12px;}
-  .badges{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:0 auto;max-width:700px;}
+  .afil{font-family:monospace;font-size:10px;letter-spacing:3px;color:#46568a;text-transform:uppercase;margin:36px 0 12px;}
+  .badges{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:0 auto;max-width:840px;}
   .badge{width:128px;height:34px;border:1px solid var(--line);background:#0a0e16;
     display:flex;align-items:center;justify-content:center;text-align:center;
     font-family:monospace;font-size:9px;letter-spacing:1px;color:#9fb0e6;text-transform:uppercase;
@@ -84,15 +84,9 @@
   .badge:hover{border-color:var(--cobalt);color:#fff;background:#0d1426;box-shadow:0 0 14px rgba(58,89,255,.25);}
   .badge .a{color:var(--cobalt-l);font-weight:bold;}
 
-  .counterwrap{margin:30px 0 0;color:#8fb6c8;font-family:"Courier New",monospace;}
-  .counter{display:inline-block;font-family:"Courier New",monospace;background:#05070e;color:#9fb8ff;
-    border:3px inset #2a3450;padding:3px 8px;letter-spacing:4px;font-size:18px;box-shadow:0 0 12px rgba(58,89,255,.4);}
-  .construction{display:inline-block;margin:24px auto 6px;padding:6px 16px;color:#cfe;font-weight:bold;
-    font-size:13px;letter-spacing:1px;background:repeating-linear-gradient(45deg,#3a59ff 0 12px,#0a0e16 12px 24px);
-    background-size:34px 34px;animation:march 1s linear infinite;}
-  @keyframes march{100%{background-position:34px 0;}}
-  .construction span{background:#05060a;color:#9fb0e6;padding:2px 8px;border:1px solid #2a3450;}
-  .smallnote{color:#5a6aa0;font-size:12px;margin:14px 0 40px;font-family:"Courier New",monospace;}
+  .visits{font-family:"Courier New",monospace;font-size:12px;letter-spacing:1px;color:#5a6aa0;margin:22px 0 0;}
+  .visits #hits{color:#8fb6c8;}
+  .smallnote{color:#46568a;font-size:12px;margin:6px 0 40px;font-family:"Courier New",monospace;}
 </style>
 <script type="importmap">
 { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
@@ -134,13 +128,6 @@
       <a class="lnk" href="https://github.com/zivsb">GITHUB</a>
       <a class="lnk" href="https://www.linkedin.com/in/ziv-weissman">LINKEDIN</a>
     </div>
-  </div>
-
-  <div class="retro">
-    <div class="mailbar">
-      <span class="lab">E-MAIL ME</span>
-      <img src="email.gif" alt="my e-mail address" width="320" height="47">
-    </div>
 
     <div class="afil">current &amp; past affiliations</div>
     <div class="badges">
@@ -149,14 +136,17 @@
       <a class="badge" href="https://clockwork.io/"><span class="a">Clockwork</span></a>
       <a class="badge" href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ena-express.html"><span><span class="a">AWS</span> · Annapurna Labs</span></a>
       <a class="badge" href="https://moment.cs.ucsb.edu/"><span><span class="a">MOMENT</span> Lab @ UCSB</span></a>
+      <a class="badge" href="https://snl.cs.ucsb.edu/"><span><span class="a">SNL</span> @ UCSB</span></a>
+    </div>
+  </div>
+
+  <div class="retro">
+    <div class="mailbar">
+      <span class="lab">E-MAIL ME</span>
+      <img src="email.gif" alt="my e-mail address" width="320" height="47">
     </div>
 
-    <div class="counterwrap">
-      &#10039; You are visitor &nbsp; <span class="counter" id="hits">00000346</span> &nbsp; &#10039;
-    </div>
-
-    <div><div class="construction"><span>&#9888; UNDER CONSTRUCTION &#9888;</span></div></div>
-
+    <p class="visits">you are visitor #<span id="hits">—</span></p>
     <p class="smallnote">last updated June 2026 &nbsp;&middot;&nbsp; &copy; Ziv Weissman</p>
   </div>
 
@@ -193,7 +183,7 @@
     // recycled live visitor counter
     fetch("https://api.counterapi.dev/v1/ziv-personal-site/visits/up")
       .then(function(r){return r.json();}).then(function(d){ var n=(d&&(d.count!=null?d.count:d.value));
-        if(n!=null) document.getElementById("hits").textContent=String(n).padStart(8,"0"); })
+        if(n!=null) document.getElementById("hits").textContent=n; })
       .catch(function(){});
   </script>
 
