@@ -166,22 +166,37 @@
       frame();
     })();
     (function(){
-      var asset="Ziv_Weissman_CV.pdf";
       function esc(s){return String(s).replace(/[&<>]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
       function C(col,s){return '<span style="color:'+col+'">'+s+'</span>';}
-      function sample(){ var t0=performance.now();
-        return fetch(asset+"?cb="+Date.now()+"-"+Math.random(),{cache:"no-store"}).then(function(r){return r.arrayBuffer();})
-          .then(function(buf){ var ms=performance.now()-t0; return {bytes:buf.byteLength,ms:ms,mbps:ms>0?(buf.byteLength*8)/(ms/1000)/1e6:0}; }); }
+      function fmtBytes(b){ return b>=1048576 ? (b/1048576).toFixed(2)+" MB" : (b/1024).toFixed(1)+" KB"; }
+      function fmtTime(ms){ return ms>=1000 ? (ms/1000).toFixed(2)+" s" : Math.round(ms)+" ms"; }
+      // real page weight + load time, straight from the Resource Timing API
+      function pageStats(){
+        var nav=performance.getEntriesByType("navigation")[0];
+        var res=performance.getEntriesByType("resource");
+        var bytes=0;
+        // body size of each resource (encoded/on-the-wire); cross-origin opaque
+        // resources report 0 and can't be measured, so they're skipped
+        function sz(r){ return r.encodedBodySize || r.decodedBodySize || r.transferSize || 0; }
+        if(nav) bytes += sz(nav);
+        res.forEach(function(r){ bytes += sz(r); });
+        var ms = nav ? (nav.duration || (nav.responseEnd-nav.startTime)) : 0;
+        return {bytes:bytes, ms:ms};
+      }
       var ipP=fetch("https://api.ipify.org?format=json").then(function(r){return r.json();}).then(function(d){return d&&d.ip;}).catch(function(){return null;});
-      var bwP=sample().then(function(){return Promise.all([sample(),sample(),sample()]);}).then(function(s){return s.reduce(function(a,b){return b.mbps>a.mbps?b:a;});});
-      Promise.all([ipP,bwP]).then(function(res){ var ip=res[0],best=res[1]; if(!best||best.mbps<=0) return;
-        var kb=(best.bytes/1024).toFixed(1)+" KB", t=best.ms>=1?best.ms.toFixed(1)+"ms":(best.ms*1000).toFixed(0)+"us",
-            rate=best.mbps>=1?best.mbps.toFixed(1)+" Mbps":Math.round(best.mbps*1000)+" Kbps", host=esc(ip||"localhost"),
-            SEP=C("#33406a","&nbsp;&nbsp;|&nbsp;&nbsp;");
-        document.getElementById("term").innerHTML=C("#8fb6c8","&gt;&gt; CONNECTION ESTABLISHED:")+"&nbsp;"+
-          C("#7e95ff","guest@"+host)+SEP+C("#8fb6c8",kb+" / "+t)+SEP+C("#cfe6ff","&darr; "+rate)+SEP+
-          C("#6ad08f","[200 OK]")+' <span class="blink">_</span>';
-      }).catch(function(){});
+      function render(){
+        ipP.then(function(ip){
+          var s=pageStats(); if(!s.bytes){ return; }
+          var rate = s.ms>0 ? (s.bytes*8)/(s.ms/1000)/1e6 : 0;
+          var rateStr = rate>=1 ? rate.toFixed(1)+" Mbps" : Math.round(rate*1000)+" Kbps";
+          var host=esc(ip||"localhost"), SEP=C("#33406a","&nbsp;&nbsp;|&nbsp;&nbsp;");
+          document.getElementById("term").innerHTML=C("#8fb6c8","&gt;&gt; CONNECTION ESTABLISHED:")+"&nbsp;"+
+            C("#7e95ff","guest@"+host)+SEP+C("#8fb6c8",fmtBytes(s.bytes)+" in "+fmtTime(s.ms))+SEP+
+            C("#cfe6ff","&darr; "+rateStr)+SEP+C("#6ad08f","[200 OK]")+' <span class="blink">_</span>';
+        });
+      }
+      if(document.readyState==="complete") setTimeout(render,80);
+      else addEventListener("load", function(){ setTimeout(render,80); });
     })();
     // recycled live visitor counter
     fetch("https://api.counterapi.dev/v1/ziv-personal-site/visits/up")
