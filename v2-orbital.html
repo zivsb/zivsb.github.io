@@ -35,8 +35,8 @@
   .term::-webkit-scrollbar{display:none;}
   .blink{animation:bl 1.05s steps(2) infinite;} @keyframes bl{50%{opacity:0;}}
 
-  /* fixed PKT telemetry, bottom-right */
-  .pkt{position:fixed;bottom:10px;right:14px;z-index:30;font-family:monospace;font-size:11px;
+  /* PKT telemetry, pinned to the bottom-left of the animated stage */
+  .pkt{position:absolute;bottom:8px;left:10px;z-index:11;font-family:monospace;font-size:11px;
     letter-spacing:2px;color:var(--cobalt-l);opacity:.85;}
 
   .wrap{position:relative;z-index:10;max-width:880px;margin:0 auto;padding:60px 22px 60px;text-align:center;}
@@ -51,7 +51,7 @@
   @keyframes g2{0%,93%,100%{transform:translate(1.5px,0)}97%{transform:translate(3px,1px)}99%{transform:translate(-1px,0)}}
   .sub{font-family:monospace;color:var(--dim);letter-spacing:3px;font-size:12px;margin:0;text-transform:uppercase;}
 
-  .stagewrap{position:relative;height:380px;margin:10px auto 2px;max-width:760px;}
+  .stagewrap{position:relative;height:210px;margin:4px auto 0;max-width:760px;}
   #stage{width:100%;height:100%;display:block;}
 
   /* explicit content sections */
@@ -84,14 +84,14 @@
   .badge:hover{border-color:var(--cobalt);color:#fff;background:#0d1426;box-shadow:0 0 14px rgba(58,89,255,.25);}
   .badge .a{color:var(--cobalt-l);font-weight:bold;}
 
-  .counterwrap{margin:30px 0 0;color:#7fd6ff;font-family:"Courier New",monospace;}
-  .counter{display:inline-block;font-family:"Courier New",monospace;background:#000;color:#39ff14;
-    border:3px inset #777;padding:3px 8px;letter-spacing:4px;font-size:18px;box-shadow:0 0 10px #39ff1466;}
-  .construction{display:inline-block;margin:24px auto 6px;padding:6px 16px;color:#000;font-weight:bold;
-    font-size:13px;letter-spacing:1px;background:repeating-linear-gradient(45deg,#ffcf00 0 12px,#000 12px 24px);
+  .counterwrap{margin:30px 0 0;color:#8fb6c8;font-family:"Courier New",monospace;}
+  .counter{display:inline-block;font-family:"Courier New",monospace;background:#05070e;color:#9fb8ff;
+    border:3px inset #2a3450;padding:3px 8px;letter-spacing:4px;font-size:18px;box-shadow:0 0 12px rgba(58,89,255,.4);}
+  .construction{display:inline-block;margin:24px auto 6px;padding:6px 16px;color:#cfe;font-weight:bold;
+    font-size:13px;letter-spacing:1px;background:repeating-linear-gradient(45deg,#3a59ff 0 12px,#0a0e16 12px 24px);
     background-size:34px 34px;animation:march 1s linear infinite;}
   @keyframes march{100%{background-position:34px 0;}}
-  .construction span{background:#ffcf00;padding:2px 5px;}
+  .construction span{background:#05060a;color:#9fb0e6;padding:2px 8px;border:1px solid #2a3450;}
   .smallnote{color:#5a6aa0;font-size:12px;margin:14px 0 40px;font-family:"Courier New",monospace;}
 </style>
 <script type="importmap">
@@ -103,15 +103,17 @@
   <canvas id="noise"></canvas>
   <div class="grain"></div><div class="scan"></div><div class="vig"></div>
   <div class="term" id="term">&gt;&gt; ESTABLISHING LINK <span class="blink">▓</span></div>
-  <div class="pkt" id="pkt">PKT ▁▁▁▁▁▁▁▁▁▁</div>
 
   <div class="wrap">
     <div class="glitch" data-text="ZIV WEISSMAN">ZIV WEISSMAN</div>
     <p class="sub">CS PhD · UC Berkeley · NetSys</p>
 
-    <div class="stagewrap"><canvas id="stage"></canvas></div>
+    <div class="stagewrap">
+      <canvas id="stage"></canvas>
+      <div class="pkt" id="pkt">PKT ▁▁▁▁▁▁▁▁▁▁</div>
+    </div>
 
-    <div class="section">
+    <div class="section" style="margin-top:8px;">
       <div class="h">About Me</div>
       <p>I'm <b>Ziv Weissman</b>, an incoming CS PhD student at UC Berkeley, in the NetSys lab,
       advised by Sylvia Ratnasamy and Rishabh Iyer. I am interested in building next generation
@@ -143,10 +145,10 @@
 
     <div class="badges">
       <a class="badge" href="https://netsys.cs.berkeley.edu/"><span><span class="a">NETSYS</span> @ Berkeley</span></a>
-      <a class="badge" href="https://www.rfc-editor.org/rfc/rfc793">RFC 793 Compliant</a>
       <a class="badge" href="https://www.clockwork.io/"><span class="a">Clockwork</span></a>
-      <a class="badge" href="https://annapurnalabs.com/"><span><span class="a">AWS</span> · Annapurna</span></a>
+      <a class="badge" href="https://annapurnalabs.com/"><span><span class="a">AWS</span> · Annapurna Labs</span></a>
       <a class="badge" href="https://moment.cs.ucsb.edu/"><span><span class="a">MOMENT</span> Lab · UCSB</span></a>
+      <a class="badge" href="https://www.bitripple.com/"><span class="a">BitRipple</span></a>
     </div>
 
     <div class="counterwrap">
@@ -203,7 +205,7 @@
     const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
     renderer.setPixelRatio(Math.min(devicePixelRatio,2));
     const scene=new THREE.Scene();
-    const camera=new THREE.PerspectiveCamera(42,1,0.1,100); camera.position.set(0,0,3.5);
+    const camera=new THREE.PerspectiveCamera(42,1,0.1,100); camera.position.set(0,0,2.2);
     const root=new THREE.Group(); scene.add(root);
     const sat=new THREE.Group(); root.add(sat);
 
