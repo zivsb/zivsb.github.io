@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ziv</title>
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
 <style>
   :root{ --bone:#e9e6df; --ink:#05060a; --cobalt:#3a59ff; --cobalt-l:#7e95ff; --dim:#5a6aa0; --line:#23304f; }
   *{box-sizing:border-box;}
@@ -35,10 +38,6 @@
   .term::-webkit-scrollbar{display:none;}
   .blink{animation:bl 1.05s steps(2) infinite;} @keyframes bl{50%{opacity:0;}}
 
-  /* PKT telemetry, pinned to the bottom-left of the animated stage */
-  .pkt{position:absolute;bottom:8px;left:10px;z-index:11;font-family:monospace;font-size:11px;
-    letter-spacing:2px;color:var(--cobalt-l);opacity:.85;}
-
   .wrap{position:relative;z-index:10;max-width:880px;margin:0 auto;padding:60px 22px 60px;text-align:center;}
 
   /* single-color cobalt glitch title over white */
@@ -49,7 +48,7 @@
   .glitch::after{color:var(--cobalt-l);opacity:.6;transform:translate(1.5px,0);clip-path:inset(58% 0 0 0);animation:g2 8.5s infinite steps(2);}
   @keyframes g1{0%,95%,100%{transform:translate(-1.5px,0)}96%{transform:translate(-3px,-1px)}98%{transform:translate(1px,0)}}
   @keyframes g2{0%,93%,100%{transform:translate(1.5px,0)}97%{transform:translate(3px,1px)}99%{transform:translate(-1px,0)}}
-  .sub{font-family:monospace;color:var(--dim);letter-spacing:3px;font-size:12px;margin:0;text-transform:uppercase;}
+  .sub{font-family:monospace;color:#8fb6c8;letter-spacing:1px;font-size:13px;margin:0;}
 
   .stagewrap{position:relative;height:210px;margin:4px auto 0;max-width:760px;}
   #stage{width:100%;height:100%;display:block;}
@@ -76,7 +75,8 @@
   .mailbar .lab{font-family:monospace;letter-spacing:3px;color:#8fb6c8;font-size:14px;font-weight:bold;}
   .mailbar img{vertical-align:middle;display:block;}
 
-  .badges{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:26px auto 0;max-width:700px;}
+  .afil{font-family:monospace;font-size:10px;letter-spacing:3px;color:#46568a;text-transform:uppercase;margin:30px 0 12px;}
+  .badges{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:0 auto;max-width:700px;}
   .badge{width:128px;height:34px;border:1px solid var(--line);background:#0a0e16;
     display:flex;align-items:center;justify-content:center;text-align:center;
     font-family:monospace;font-size:9px;letter-spacing:1px;color:#9fb0e6;text-transform:uppercase;
@@ -106,11 +106,10 @@
 
   <div class="wrap">
     <div class="glitch" data-text="ZIV WEISSMAN">ZIV WEISSMAN</div>
-    <p class="sub">CS PhD · UC Berkeley · NetSys</p>
+    <p class="sub">CS PhD Student at UC Berkeley working on next gen computer networking</p>
 
     <div class="stagewrap">
       <canvas id="stage"></canvas>
-      <div class="pkt" id="pkt">PKT ▁▁▁▁▁▁▁▁▁▁</div>
     </div>
 
     <div class="section" style="margin-top:8px;">
@@ -143,12 +142,13 @@
       <img src="email.gif" alt="my e-mail address" width="320" height="47">
     </div>
 
+    <div class="afil">current &amp; past affiliations</div>
     <div class="badges">
-      <a class="badge" href="https://netsys.cs.berkeley.edu/"><span><span class="a">NETSYS</span> @ Berkeley</span></a>
-      <a class="badge" href="https://www.clockwork.io/"><span class="a">Clockwork</span></a>
-      <a class="badge" href="https://annapurnalabs.com/"><span><span class="a">AWS</span> · Annapurna Labs</span></a>
-      <a class="badge" href="https://moment.cs.ucsb.edu/"><span><span class="a">MOMENT</span> Lab · UCSB</span></a>
+      <a class="badge" href="https://netsys-website.exe.xyz/"><span><span class="a">NETSYS</span> @ Berkeley</span></a>
       <a class="badge" href="https://www.bitripple.com/"><span class="a">BitRipple</span></a>
+      <a class="badge" href="https://clockwork.io/"><span class="a">Clockwork</span></a>
+      <a class="badge" href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ena-express.html"><span><span class="a">AWS</span> · Annapurna Labs</span></a>
+      <a class="badge" href="https://moment.cs.ucsb.edu/"><span><span class="a">MOMENT</span> Lab @ UCSB</span></a>
     </div>
 
     <div class="counterwrap">
@@ -252,7 +252,7 @@
     new ResizeObserver(resize).observe(canvas); resize();
     let last=performance.now()/1000;
     function loop(){ const now=performance.now()/1000, dt=Math.min(now-last,0.05); last=now;
-      sat.rotation.y += dt*0.25; sat.rotation.x = Math.sin(now*0.25)*0.12; root.rotation.y += dt*0.02;
+      sat.rotation.y = Math.sin(now*0.22)*0.5; sat.rotation.x = Math.sin(now*0.16)*0.08;
       camera.position.x += ((px*0.8)-camera.position.x)*0.05; camera.position.y += ((-py*0.5)-camera.position.y)*0.05; camera.lookAt(0,0,0);
       updatePackets(dt); updateNodes(now);
       if(now>nextG){ gUntil=now+0.12; nextG=now+2.5+Math.random()*3.5; }
@@ -262,8 +262,6 @@
     }
     loop();
 
-    const pktEl=document.getElementById('pkt');
-    setInterval(()=>{ let s=''; for(let i=0;i<10;i++) s+=Math.random()<0.5?'▁':'▆'; pktEl.textContent='PKT '+s; },140);
   </script>
 </body>
 </html>
