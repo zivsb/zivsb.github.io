@@ -146,8 +146,7 @@
       <img src="email.gif" alt="my e-mail address" width="248" height="32">
     </div>
 
-    <p class="visits">you are visitor #<span id="hits">—</span></p>
-    <p class="smallnote">last updated June 2026 &nbsp;&middot;&nbsp; &copy; Ziv Weissman</p>
+    <p class="smallnote">last updated August 2026 &nbsp;&middot;&nbsp; &copy; Ziv Weissman</p>
   </div>
 
   <!-- background noise + terminal easter egg + live counter -->
@@ -195,11 +194,6 @@
       if(document.readyState==="complete") setTimeout(render,80);
       else addEventListener("load", function(){ setTimeout(render,80); });
     })();
-    // recycled live visitor counter
-    fetch("https://api.counterapi.dev/v1/ziv-personal-site/visits/up")
-      .then(function(r){return r.json();}).then(function(d){ var n=(d&&(d.count!=null?d.count:d.value));
-        if(n!=null) document.getElementById("hits").textContent=n; })
-      .catch(function(){});
   </script>
 
   <!-- WebGL satellite relay -->
